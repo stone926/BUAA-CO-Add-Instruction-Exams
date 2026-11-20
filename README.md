@@ -90,6 +90,7 @@ P3、P4 按课程不启用延迟槽，P5～P7 按课程启用。脚本声明了�
 
 - [SB](P4_L8_SB_2022/P4_L8_SB_2022.md) 是标准字节存储练习，没有附带 `.class`；TS 脚本可用，参考验证使用原生 MARS 的 SB。
 - [LWER](P5_M_lwer_2022/P5_M_lwer_2022.md) 没有附带 `.class`；TS 实现按题意验证，未伪造 Java 附件。它会强制按字对齐地址，并根据内存和旧目标寄存器值选择偶数目的寄存器，包括零寄存器。
+- [SHL](P6_shl_hack/P6_shl_hack.md) 没有附带 `.class`；平台只给出“交换乘除法单元中 HI 与 LO”的题面，TS 按题面实现，未伪造 Java 附件。
 
 ### 保留题目特有的边界语义
 
@@ -97,6 +98,8 @@ P3、P4 按课程不启用延迟槽，P5～P7 按课程启用。脚本声明了�
 - RLB 的题目输入范围为立即数 `0..31`。
 - ADDEI 将立即数高位补 1；表示原始位 `0xffff` 时可使用 `-1`，避免不同汇编器对十进制 `65535` 的范围检查差异。
 - BLZTAL 的分支位移会受寄存器值影响；BONALL 不跳转时取消延迟槽，但仍写链接寄存器；LHOGEZ 可能改写 `$31 = PC + 4`。实现时需按各自题意处理。
+- BDS 在除数为 0 时，题面与原附件都没有定义 HI/LO 结果：原 `.class` 会抛出 `ArithmeticException`，TS 同样报错，不自行约定写回值。
+- JAP 把链接地址（P6 为 PC+8）写入 `$sp` 指向的字，再把 `$sp` 减 4，然后跳到 `PC[31:28] || target || 00`；题面明确不考虑地址不对齐等异常。
 
 脚本含潜在读写、随机生成与课程冒险时机声明。冒险覆盖来自课程模型，并非对实际 CPU 内部流水线的测量。若自定义定义覆盖了测试前导、处理程序或停机代码所需基础指令的编码，插件会报告具体冲突；可以用用户 ASM 构造相应测试。
 
@@ -210,6 +213,9 @@ node tools/exercise-web/server.js
 | [P5_lwso_2020_blog](supplemented/P5_lwso_2020_blog/P5_lwso_2020_blog.md) | P5 | 残题补全 | 博客整理 | 无 | [P5_lwso_2020_blog_题解.md](supplemented/P5_lwso_2020_blog/P5_lwso_2020_blog_题解.md) |
 | [P5_swc_2021_blog](P5_swc_2021_blog/P5_swc_2021_blog.md) | P5 | 行为完整 | 博客整理 | 无 | 无 |
 | [P5_xe_2024_blog](supplemented/P5_xe_2024_blog/P5_xe_2024_blog.md) | P5 | 残题补全 | 博客整理 | 无 | [P5_xe_2024_blog_题解.md](supplemented/P5_xe_2024_blog/P5_xe_2024_blog_题解.md) |
+| [P6_L1_bds_2022](P6_L1_bds_2022/P6_L1_bds_2022.md) | P6 | 行为完整 | 课程题库 | [bds.ts](P6_L1_bds_2022/bds.ts) | [bds.class](P6_L1_bds_2022/bds.class) |
+| [P6_L2_bezal_2022](P6_L2_bezal_2022/P6_L2_bezal_2022.md) | P6 | 行为完整 | 课程题库 | [bezal.ts](P6_L2_bezal_2022/bezal.ts) | [bezal.class](P6_L2_bezal_2022/bezal.class) |
+| [P6_L4_jap_2022](P6_L4_jap_2022/P6_L4_jap_2022.md) | P6 | 行为完整 | 课程题库 | [jap.ts](P6_L4_jap_2022/jap.ts) | [jap.class](P6_L4_jap_2022/jap.class) |
 | [P6_bds_2021_blog](supplemented/P6_bds_2021_blog/P6_bds_2021_blog.md) | P6 | 残题补全 | 博客整理 | 无 | [P6_bds_2021_blog_题解.md](supplemented/P6_bds_2021_blog/P6_bds_2021_blog_题解.md) |
 | [P6_bezal_2021_blog](P6_bezal_2021_blog/P6_bezal_2021_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_bezal_2021_blog_题解.md](P6_bezal_2021_blog/P6_bezal_2021_blog_题解.md) |
 | [P6_bgezalr_2020_blog](P6_bgezalr_2020_blog/P6_bgezalr_2020_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_bgezalr_2020_blog_题解.md](P6_bgezalr_2020_blog/P6_bgezalr_2020_blog_题解.md) |
@@ -226,6 +232,7 @@ node tools/exercise-web/server.js
 | [P6_msub_2020_blog](P6_msub_2020_blog/P6_msub_2020_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_msub_2020_blog_题解.md](P6_msub_2020_blog/P6_msub_2020_blog_题解.md) |
 | [P6_sbc_2024_blog](P6_sbc_2024_blog/P6_sbc_2024_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_sbc_2024_blog_题解.md](P6_sbc_2024_blog/P6_sbc_2024_blog_题解.md) |
 | [P6_shl_2022_blog](P6_shl_2022_blog/P6_shl_2022_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_shl_2022_blog_题解.md](P6_shl_2022_blog/P6_shl_2022_blog_题解.md) |
+| [P6_shl_hack](P6_shl_hack/P6_shl_hack.md) | P6 | 行为完整 | 课程题库 | [shl.ts](P6_shl_hack/shl.ts) | 无 |
 | [P6_wtd_2024_blog](P6_wtd_2024_blog/P6_wtd_2024_blog.md) | P6 | 行为完整 | 博客整理 | 无 | [P6_wtd_2024_blog_题解.md](P6_wtd_2024_blog/P6_wtd_2024_blog_题解.md) |
 | [P7_CP0内存限制异常_2024_blog](P7_CP0内存限制异常_2024_blog/P7_CP0内存限制异常_2024_blog.md) | P7 | 行为完整 | 博客整理 | 无 | [P7_CP0内存限制异常_2024_blog_题解.md](P7_CP0内存限制异常_2024_blog/P7_CP0内存限制异常_2024_blog_题解.md) |
 | [P7_Watch异常_2024_blog](supplemented/P7_Watch异常_2024_blog/P7_Watch异常_2024_blog.md) | P7 | 残题补全 | 博客整理 | 无 | [P7_Watch异常_2024_blog_题解.md](supplemented/P7_Watch异常_2024_blog/P7_Watch异常_2024_blog_题解.md) |
@@ -246,3 +253,4 @@ node tools/exercise-web/server.js
 - “残题补全”表示在原有片段上补充练习规则，区别于直接整理的完整博客题；新增条件及补全日期另存于 `.exercise.json.completion`。
 - `P7_lww_2024_blog` 是原博主自行提出的变体，**不是2024年考题记录**；现作为残题补全练习保存，其自拟身份继续保留。
 - 管理页面可按阶段、课程题库、原完整博客题或残题补全筛选，支持查看、编辑和管理题解附件。编辑状态可在根目录与 `supplemented/` 之间移动整题，脚本字段可留空。
+- P6 的 2022 年原创题（`bds`、`bezal`、`jap`、`shl`）已按课程题库收录，与同名的博客整理条目并存；编码和语义以原创题面与 `.class` 为准，博客条目保留原有出处与补全记录。
